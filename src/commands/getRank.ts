@@ -62,6 +62,12 @@ export async function execute(interaction: CommandInteraction) {
     const data = await getRank(interaction.user.id, interaction.guildId);
     const data_ = await getRankOfGuild(interaction.guildId);
 
+    if (data['chatters']['data'].length <= 0 || data_['chatters']['data'].length  <= 0) {
+        return interaction.deferReply({ephemeral: true}).then(() => {
+            interaction.followUp("You need to be in a guild to use this command");
+        });
+    }
+
     const rank = data_['chatters']['data'].findIndex((element: any) => element['attributes']['user_id'] === interaction.user.id) + 1;
     const chatter = data['chatters']['data'][0]['attributes']
 
