@@ -61,6 +61,12 @@ async function embedLeaderboard(leaderboard: string[], page: number) {
 
 export async function execute(interaction: CommandInteraction) {
     const leaderboard = await getLeaderboard(interaction.guildId);
+
+    if (leaderboard.length <= 0) {
+        await interaction.reply({ content: "No data found!" ,ephemeral: true });
+        return;
+    }
+
     let page = 0;
     const totalPages = Math.ceil(leaderboard.length / 5);
 
