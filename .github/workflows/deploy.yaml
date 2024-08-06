@@ -1,0 +1,46 @@
+name: 'main'
+on:
+  push:
+    branches: [main]
+    paths:
+      - '*'
+      - '.github/workflows/deploy.yaml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create .env file with secrets
+        run: |
+          echo DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} >> .env
+          echo DISCORD_CLIENT_ID=${{ secrets.DISCORD_CLIENT_ID }} >> .env
+          echo STRAPI_BASE_URL=${{ secrets.STRAPI_BASE_URL }} >> .env
+          echo STRAPI_API_KEY=${{ secrets.STRAPI_API_KEY }} >> .env
+
+      - name: Build Docker image
+        run: docker build -t wfc-bot:latest .
+
+      - name: Save Docker image as tar file
+        run: docker save -o wfc-bot.tar wfc-bot:latest
+
+      - name: Transfer Docker image to remote server
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          scp -o StrictHostKeyChecking=no wfc-bot.tar ${{ secrets.REMOTE_SERVER_USERNAME }}@${{ secrets.REMOTE_SERVER_ADDRESS }}:${{ secrets.REMOTE_SERVER_PATH }}
+
+      - name: Transfer Docker Compose file to remote server
+        run: |
+          scp -o StrictHostKeyChecking=no docker-compose.yaml ${{ secrets.REMOTE_SERVER_USERNAME }}@${{ secrets.REMOTE_SERVER_ADDRESS }}:${{ secrets.REMOTE_SERVER_PATH }}
+
+      - name: Deploy Docker containers using Docker Compose on remote server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_SERVER_USERNAME }}@${{ secrets.REMOTE_SERVER_ADDRESS }} << 'ENDSSH'
+          docker load -i ${{ secrets.REMOTE_SERVER_PATH }}/wfc-bot.tar
+          docker-compose -f ${{ secrets.REMOTE_SERVER_PATH }}/docker-compose.yaml up -d
+          ENDSSH
