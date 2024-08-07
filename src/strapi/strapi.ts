@@ -1,15 +1,16 @@
-import { config } from "../config";
-import { gql } from "graphql-request";
+import {config} from "../config";
+import {gql} from "graphql-request";
+import {Enum_Text_Type} from "../models/types";
 
 const token = config.STRAPI_API_KEY;
 
-type typeOfText = 'Rank' | 'Leaderboard'
+type typeOfText = Enum_Text_Type
 
 function getFullUrl(path: string): URL {
     return new URL(path, config.STRAPI_BASE_URL);
 }
 
-export async function putDataFromStrapi(path:string, body?: any) {
+export async function putDataToStrapi(path: string, body?: any) {
     console.info(`POST ${getFullUrl(path).href}`);
 
     const response = await fetch(getFullUrl(path).href, {
@@ -30,7 +31,7 @@ export async function putDataFromStrapi(path:string, body?: any) {
     return response;
 }
 
-export async function postDataFromStrapi(path: string, body?: any){
+export async function postDataToStrapi(path: string, body?: any) {
     console.info(`POST ${getFullUrl(path).href}`);
 
     const response = await fetch(getFullUrl(path).href, {
@@ -71,8 +72,6 @@ export async function getDataFromStrapi(path: string): Promise<Response> {
 
 
 export async function getTextFromStrapi(type: typeOfText): Promise<string> {
-    const _path = 'api/texts'
-
     const query = gql`
         query GetText($type: String) {
             texts(filters: { type: { eq: $type } }) {
@@ -86,7 +85,7 @@ export async function getTextFromStrapi(type: typeOfText): Promise<string> {
         }
     `;
 
-    const variables = { type: type };
+    const variables = {type: type};
     const response = await config.graphQLClient.request(query, variables);
     const random = Math.floor(Math.random() * response['texts']['data'].length);
     return await response['texts']['data'][random]['attributes']['text'];
