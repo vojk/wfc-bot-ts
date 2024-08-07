@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
 import { config } from "./config";
 import { commands } from "./commands";
-import { deployCommands } from "./deploy-commands";
+import { deployCommands, deployGlobalCommands } from "./deploy-commands";
 import { getDataFromStrapi } from "./strapi/strapi";
 import { countMessages } from "./countMessages";
 
@@ -16,13 +16,17 @@ async function main() {
 }
 
 const client = new Client({
-    intents: ["Guilds", "GuildMessages", "DirectMessages"],
+    intents: ["Guilds", "GuildMessages", "DirectMessages", "GuildVoiceStates"],
 });
 
-client.once("ready", () => {
+client.once("ready", async () => {
     console.log("Discord bot is ready! 🤖");
     console.log(`Logged in as ${client.user?.tag}`);
-    main();
+
+    await main();
+
+    // Deploy global commands (optional)
+    await deployGlobalCommands();
 });
 
 client.on("guildCreate", async (guild) => {
@@ -30,9 +34,16 @@ client.on("guildCreate", async (guild) => {
 });
 
 client.on("interactionCreate", async (interaction) => {
+    if (interaction.user.bot) return;
+
+    if (interaction.channel === null) {
+        return;
+    }
+
     if (!interaction.isCommand()) {
         return;
     }
+
     const { commandName } = interaction;
     if (commands[commandName as keyof typeof commands]) {
         commands[commandName as keyof typeof commands].execute(interaction);

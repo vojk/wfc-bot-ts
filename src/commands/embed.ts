@@ -35,9 +35,9 @@ function createEmbedsFromJson(json: any) {
 }
 
 export async function execute(interaction: CommandInteraction) {
-    const jsonString = interaction.options.get('json_format')?.value as string;
+    const jsonString = interaction.options.get('json')?.value as string;
 
-    console.log(jsonString)
+    console.log(jsonString);
 
     try {
         const json = JSON.parse(jsonString || '{}');
@@ -47,17 +47,26 @@ export async function execute(interaction: CommandInteraction) {
 
         const embeds = createEmbedsFromJson(json);
 
-        await interaction.reply({
-            content: json.content || '',
-            embeds: embeds,
-            ephemeral: false // Change to false if you want the message to be visible to everyone
-        });
+        if (!interaction.replied && !interaction.deferred) {
+            await interaction.reply({
+                content: json.content || '',
+                embeds: embeds,
+                ephemeral: false // Change to false if you want the message to be visible to everyone
+            });
+        } else {
+            console.warn('Interaction has already been replied to or deferred.');
+        }
     } catch (error) {
         console.error('Error occurred while processing the JSON:', error);
         console.error('Received JSON String:', jsonString);
-        await interaction.reply({
-            content: 'There was an error parsing the JSON. Please make sure it is valid.',
-            ephemeral: true
-        });
+
+        if (!interaction.replied && !interaction.deferred) {
+            await interaction.reply({
+                content: 'There was an error parsing the JSON. Please make sure it is valid.',
+                ephemeral: true
+            });
+        } else {
+            console.warn('Cannot reply with error message as interaction has already been acknowledged.');
+        }
     }
 }
