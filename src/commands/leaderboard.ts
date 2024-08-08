@@ -88,7 +88,7 @@ export async function execute(interaction: CommandInteraction) {
     const embed = await embedLeaderboard(leaderboard, page);
     const row = updateButtons(page);
 
-    const message = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
+    const message = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true, ephemeral: true });
 
     const filter = (i: Interaction) => i.isButton() && ['back', 'forward'].includes(i.customId) && i.user.id === interaction.user.id;
     const collector = message.createMessageComponentCollector({ filter, time: 60000 });

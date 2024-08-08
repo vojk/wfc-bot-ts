@@ -39,7 +39,11 @@ const getAchievementsOfUser = gql`
 
 export const data = new SlashCommandBuilder()
     .setName("achievement")
-    .setDescription("Get your achievements!");
+    .setDescription("Get your achievements!")
+    .addUserOption(option =>
+        option.setName('user')
+            .setDescription('The user to get the achievements from')
+            .setRequired(false));
 
 async function getAchievements(userId: string, guildId: string | null) {
     const achievements = await config.graphQLClient.request(getAchievementsOfUser, {user_id: userId, guild: guildId});
@@ -82,7 +86,7 @@ export async function execute(interaction: CommandInteraction) {
         // Acknowledge the interaction to give more time to process
         await interaction.deferReply({ ephemeral: true });
 
-        const userId = interaction.user.id;
+        const userId = interaction.options.getUser('user')?.id || interaction.user.id;
         const guildId = interaction.guildId;
 
         const achievements: Achievement[] = await getAchievements(userId, guildId);
