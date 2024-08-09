@@ -57,8 +57,8 @@ function calculateAge(dateOfBirth: string) {
 
 async function sendBirthdayMessage(client: Client, birthday: any) {
     if (!(birthday == null)) {
-        const guild = client.guilds.cache.get('1053651327852499084')
-        const channel = guild?.channels.cache.get('1053651327852499087') as TextChannel
+        const guild = client.guilds.cache.get('281524601765494784')
+        const channel = guild?.channels.cache.get('795401503488606209') as TextChannel
         const text = await getTextFromStrapi('Birthday')
         const age = calculateAge(birthday.attributes.dateOfBirth)
 
