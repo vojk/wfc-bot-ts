@@ -14,6 +14,8 @@ export type Scalars = {
   JSON: any;
   /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: any;
+  /** A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
+  Date: any;
   /** The `BigInt` scalar type represents non-fractional signed whole numeric values. */
   Long: any;
   /** The `Upload` scalar type represents a file upload. */
@@ -186,6 +188,31 @@ export type FloatFilterInput = {
   in?: InputMaybe<Array<InputMaybe<Scalars['Float']>>>;
   notIn?: InputMaybe<Array<InputMaybe<Scalars['Float']>>>;
   between?: InputMaybe<Array<InputMaybe<Scalars['Float']>>>;
+};
+
+export type DateFilterInput = {
+  and?: InputMaybe<Array<InputMaybe<Scalars['Date']>>>;
+  or?: InputMaybe<Array<InputMaybe<Scalars['Date']>>>;
+  not?: InputMaybe<DateFilterInput>;
+  eq?: InputMaybe<Scalars['Date']>;
+  eqi?: InputMaybe<Scalars['Date']>;
+  ne?: InputMaybe<Scalars['Date']>;
+  nei?: InputMaybe<Scalars['Date']>;
+  startsWith?: InputMaybe<Scalars['Date']>;
+  endsWith?: InputMaybe<Scalars['Date']>;
+  contains?: InputMaybe<Scalars['Date']>;
+  notContains?: InputMaybe<Scalars['Date']>;
+  containsi?: InputMaybe<Scalars['Date']>;
+  notContainsi?: InputMaybe<Scalars['Date']>;
+  gt?: InputMaybe<Scalars['Date']>;
+  gte?: InputMaybe<Scalars['Date']>;
+  lt?: InputMaybe<Scalars['Date']>;
+  lte?: InputMaybe<Scalars['Date']>;
+  null?: InputMaybe<Scalars['Boolean']>;
+  notNull?: InputMaybe<Scalars['Boolean']>;
+  in?: InputMaybe<Array<InputMaybe<Scalars['Date']>>>;
+  notIn?: InputMaybe<Array<InputMaybe<Scalars['Date']>>>;
+  between?: InputMaybe<Array<InputMaybe<Scalars['Date']>>>;
 };
 
 export type DateTimeFilterInput = {
@@ -601,7 +628,8 @@ export type AchievementFiltersInput = {
   name?: InputMaybe<StringFilterInput>;
   description?: InputMaybe<StringFilterInput>;
   category?: InputMaybe<StringFilterInput>;
-  guild?: InputMaybe<GuildFiltersInput>;
+  guild?: InputMaybe<StringFilterInput>;
+  achievemt_chatters?: InputMaybe<AchievemtChatterFiltersInput>;
   createdAt?: InputMaybe<DateTimeFilterInput>;
   updatedAt?: InputMaybe<DateTimeFilterInput>;
   and?: InputMaybe<Array<InputMaybe<AchievementFiltersInput>>>;
@@ -613,7 +641,8 @@ export type AchievementInput = {
   name?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
   category?: InputMaybe<Enum_Achievement_Category>;
-  guild?: InputMaybe<Scalars['ID']>;
+  guild?: InputMaybe<Scalars['String']>;
+  achievemt_chatters?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 export type Achievement = {
@@ -621,9 +650,18 @@ export type Achievement = {
   name: Scalars['String'];
   description: Scalars['String'];
   category?: Maybe<Enum_Achievement_Category>;
-  guild?: Maybe<GuildEntityResponse>;
+  guild: Scalars['String'];
+  achievemt_chatters?: Maybe<AchievemtChatterRelationResponseCollection>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+
+export type AchievementAchievemt_ChattersArgs = {
+  filters?: InputMaybe<AchievemtChatterFiltersInput>;
+  pagination?: InputMaybe<PaginationArg>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  publicationState?: InputMaybe<PublicationState>;
 };
 
 export type AchievementEntity = {
@@ -643,17 +681,114 @@ export type AchievementEntityResponseCollection = {
   meta: ResponseCollectionMeta;
 };
 
-export type AchievementRelationResponseCollection = {
-  __typename?: 'AchievementRelationResponseCollection';
-  data: Array<AchievementEntity>;
+export type AchievemtChatterFiltersInput = {
+  id?: InputMaybe<IdFilterInput>;
+  achievement?: InputMaybe<AchievementFiltersInput>;
+  chatter?: InputMaybe<ChatterFiltersInput>;
+  createdAt?: InputMaybe<DateTimeFilterInput>;
+  updatedAt?: InputMaybe<DateTimeFilterInput>;
+  publishedAt?: InputMaybe<DateTimeFilterInput>;
+  and?: InputMaybe<Array<InputMaybe<AchievemtChatterFiltersInput>>>;
+  or?: InputMaybe<Array<InputMaybe<AchievemtChatterFiltersInput>>>;
+  not?: InputMaybe<AchievemtChatterFiltersInput>;
+};
+
+export type AchievemtChatterInput = {
+  achievement?: InputMaybe<Scalars['ID']>;
+  chatter?: InputMaybe<Scalars['ID']>;
+  publishedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type AchievemtChatter = {
+  __typename?: 'AchievemtChatter';
+  achievement?: Maybe<AchievementEntityResponse>;
+  chatter?: Maybe<ChatterEntityResponse>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  publishedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type AchievemtChatterEntity = {
+  __typename?: 'AchievemtChatterEntity';
+  id?: Maybe<Scalars['ID']>;
+  attributes?: Maybe<AchievemtChatter>;
+};
+
+export type AchievemtChatterEntityResponse = {
+  __typename?: 'AchievemtChatterEntityResponse';
+  data?: Maybe<AchievemtChatterEntity>;
+};
+
+export type AchievemtChatterEntityResponseCollection = {
+  __typename?: 'AchievemtChatterEntityResponseCollection';
+  data: Array<AchievemtChatterEntity>;
+  meta: ResponseCollectionMeta;
+};
+
+export type AchievemtChatterRelationResponseCollection = {
+  __typename?: 'AchievemtChatterRelationResponseCollection';
+  data: Array<AchievemtChatterEntity>;
+};
+
+export type BirthdayFiltersInput = {
+  id?: InputMaybe<IdFilterInput>;
+  name?: InputMaybe<StringFilterInput>;
+  dateOfBirth?: InputMaybe<DateFilterInput>;
+  guild?: InputMaybe<GuildFiltersInput>;
+  createdAt?: InputMaybe<DateTimeFilterInput>;
+  updatedAt?: InputMaybe<DateTimeFilterInput>;
+  publishedAt?: InputMaybe<DateTimeFilterInput>;
+  and?: InputMaybe<Array<InputMaybe<BirthdayFiltersInput>>>;
+  or?: InputMaybe<Array<InputMaybe<BirthdayFiltersInput>>>;
+  not?: InputMaybe<BirthdayFiltersInput>;
+};
+
+export type BirthdayInput = {
+  name?: InputMaybe<Scalars['String']>;
+  dateOfBirth?: InputMaybe<Scalars['Date']>;
+  guild?: InputMaybe<Scalars['ID']>;
+  publishedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type Birthday = {
+  __typename?: 'Birthday';
+  name: Scalars['String'];
+  dateOfBirth?: Maybe<Scalars['Date']>;
+  guild?: Maybe<GuildEntityResponse>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  publishedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type BirthdayEntity = {
+  __typename?: 'BirthdayEntity';
+  id?: Maybe<Scalars['ID']>;
+  attributes?: Maybe<Birthday>;
+};
+
+export type BirthdayEntityResponse = {
+  __typename?: 'BirthdayEntityResponse';
+  data?: Maybe<BirthdayEntity>;
+};
+
+export type BirthdayEntityResponseCollection = {
+  __typename?: 'BirthdayEntityResponseCollection';
+  data: Array<BirthdayEntity>;
+  meta: ResponseCollectionMeta;
+};
+
+export type BirthdayRelationResponseCollection = {
+  __typename?: 'BirthdayRelationResponseCollection';
+  data: Array<BirthdayEntity>;
 };
 
 export type ChatterFiltersInput = {
   id?: InputMaybe<IdFilterInput>;
   name?: InputMaybe<StringFilterInput>;
-  guild?: InputMaybe<GuildFiltersInput>;
   user_id?: InputMaybe<StringFilterInput>;
   numOfMessages?: InputMaybe<LongFilterInput>;
+  guild?: InputMaybe<StringFilterInput>;
+  achievemt_chatters?: InputMaybe<AchievemtChatterFiltersInput>;
   createdAt?: InputMaybe<DateTimeFilterInput>;
   updatedAt?: InputMaybe<DateTimeFilterInput>;
   and?: InputMaybe<Array<InputMaybe<ChatterFiltersInput>>>;
@@ -663,19 +798,29 @@ export type ChatterFiltersInput = {
 
 export type ChatterInput = {
   name?: InputMaybe<Scalars['String']>;
-  guild?: InputMaybe<Scalars['ID']>;
   user_id?: InputMaybe<Scalars['String']>;
   numOfMessages?: InputMaybe<Scalars['Long']>;
+  guild?: InputMaybe<Scalars['String']>;
+  achievemt_chatters?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 export type Chatter = {
   __typename?: 'Chatter';
   name: Scalars['String'];
-  guild?: Maybe<GuildEntityResponse>;
   user_id: Scalars['String'];
   numOfMessages: Scalars['Long'];
+  guild: Scalars['String'];
+  achievemt_chatters?: Maybe<AchievemtChatterRelationResponseCollection>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+
+export type ChatterAchievemt_ChattersArgs = {
+  filters?: InputMaybe<AchievemtChatterFiltersInput>;
+  pagination?: InputMaybe<PaginationArg>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  publicationState?: InputMaybe<PublicationState>;
 };
 
 export type ChatterEntity = {
@@ -695,17 +840,11 @@ export type ChatterEntityResponseCollection = {
   meta: ResponseCollectionMeta;
 };
 
-export type ChatterRelationResponseCollection = {
-  __typename?: 'ChatterRelationResponseCollection';
-  data: Array<ChatterEntity>;
-};
-
 export type GuildFiltersInput = {
   id?: InputMaybe<IdFilterInput>;
   guild_id?: InputMaybe<StringFilterInput>;
   guild_name?: InputMaybe<StringFilterInput>;
-  achievements?: InputMaybe<AchievementFiltersInput>;
-  chatters?: InputMaybe<ChatterFiltersInput>;
+  birthdays?: InputMaybe<BirthdayFiltersInput>;
   createdAt?: InputMaybe<DateTimeFilterInput>;
   updatedAt?: InputMaybe<DateTimeFilterInput>;
   and?: InputMaybe<Array<InputMaybe<GuildFiltersInput>>>;
@@ -716,32 +855,24 @@ export type GuildFiltersInput = {
 export type GuildInput = {
   guild_id?: InputMaybe<Scalars['String']>;
   guild_name?: InputMaybe<Scalars['String']>;
-  achievements?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
-  chatters?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
+  birthdays?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 export type Guild = {
   __typename?: 'Guild';
   guild_id: Scalars['String'];
   guild_name: Scalars['String'];
-  achievements?: Maybe<AchievementRelationResponseCollection>;
-  chatters?: Maybe<ChatterRelationResponseCollection>;
+  birthdays?: Maybe<BirthdayRelationResponseCollection>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 
-export type GuildAchievementsArgs = {
-  filters?: InputMaybe<AchievementFiltersInput>;
+export type GuildBirthdaysArgs = {
+  filters?: InputMaybe<BirthdayFiltersInput>;
   pagination?: InputMaybe<PaginationArg>;
   sort?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-};
-
-
-export type GuildChattersArgs = {
-  filters?: InputMaybe<ChatterFiltersInput>;
-  pagination?: InputMaybe<PaginationArg>;
-  sort?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  publicationState?: InputMaybe<PublicationState>;
 };
 
 export type GuildEntity = {
@@ -761,28 +892,88 @@ export type GuildEntityResponseCollection = {
   meta: ResponseCollectionMeta;
 };
 
-export type TestFiltersInput = {
+export type QuoteFiltersInput = {
   id?: InputMaybe<IdFilterInput>;
-  testovaci?: InputMaybe<StringFilterInput>;
+  quote?: InputMaybe<StringFilterInput>;
+  guild_id?: InputMaybe<StringFilterInput>;
   createdAt?: InputMaybe<DateTimeFilterInput>;
   updatedAt?: InputMaybe<DateTimeFilterInput>;
   publishedAt?: InputMaybe<DateTimeFilterInput>;
+  and?: InputMaybe<Array<InputMaybe<QuoteFiltersInput>>>;
+  or?: InputMaybe<Array<InputMaybe<QuoteFiltersInput>>>;
+  not?: InputMaybe<QuoteFiltersInput>;
+};
+
+export type QuoteInput = {
+  quote?: InputMaybe<Scalars['String']>;
+  guild_id?: InputMaybe<Scalars['String']>;
+  publishedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type Quote = {
+  __typename?: 'Quote';
+  quote?: Maybe<Scalars['String']>;
+  guild_id: Scalars['String'];
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  publishedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type QuoteEntity = {
+  __typename?: 'QuoteEntity';
+  id?: Maybe<Scalars['ID']>;
+  attributes?: Maybe<Quote>;
+};
+
+export type QuoteEntityResponse = {
+  __typename?: 'QuoteEntityResponse';
+  data?: Maybe<QuoteEntity>;
+};
+
+export type QuoteEntityResponseCollection = {
+  __typename?: 'QuoteEntityResponseCollection';
+  data: Array<QuoteEntity>;
+  meta: ResponseCollectionMeta;
+};
+
+export enum Enum_Test_State {
+  Undefined = 'undefined',
+  Nk = 'NK',
+  PostNk = 'POST_NK',
+  Sk = 'SK',
+  PostSk = 'POST_SK',
+  Grf = 'GRF',
+  PostGrf = 'POST_GRF'
+}
+
+export type TestFiltersInput = {
+  id?: InputMaybe<IdFilterInput>;
+  decks?: InputMaybe<JsonFilterInput>;
+  starts?: InputMaybe<DateTimeFilterInput>;
+  ends?: InputMaybe<DateTimeFilterInput>;
+  state?: InputMaybe<StringFilterInput>;
+  createdAt?: InputMaybe<DateTimeFilterInput>;
+  updatedAt?: InputMaybe<DateTimeFilterInput>;
   and?: InputMaybe<Array<InputMaybe<TestFiltersInput>>>;
   or?: InputMaybe<Array<InputMaybe<TestFiltersInput>>>;
   not?: InputMaybe<TestFiltersInput>;
 };
 
 export type TestInput = {
-  testovaci?: InputMaybe<Scalars['String']>;
-  publishedAt?: InputMaybe<Scalars['DateTime']>;
+  decks?: InputMaybe<Scalars['JSON']>;
+  starts?: InputMaybe<Scalars['DateTime']>;
+  ends?: InputMaybe<Scalars['DateTime']>;
+  state?: InputMaybe<Enum_Test_State>;
 };
 
 export type Test = {
   __typename?: 'Test';
-  testovaci?: Maybe<Scalars['String']>;
+  decks?: Maybe<Scalars['JSON']>;
+  starts?: Maybe<Scalars['DateTime']>;
+  ends?: Maybe<Scalars['DateTime']>;
+  state?: Maybe<Enum_Test_State>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
-  publishedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type TestEntity = {
@@ -849,7 +1040,7 @@ export type TextEntityResponseCollection = {
   meta: ResponseCollectionMeta;
 };
 
-export type GenericMorph = UploadFile | UploadFolder | I18NLocale | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | Achievement | Chatter | Guild | Test | Text;
+export type GenericMorph = UploadFile | UploadFolder | I18NLocale | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsUser | Achievement | AchievemtChatter | Birthday | Chatter | Guild | Quote | Test | Text;
 
 export type FileInfoInput = {
   name?: InputMaybe<Scalars['String']>;
@@ -934,10 +1125,16 @@ export type Query = {
   usersPermissionsUsers?: Maybe<UsersPermissionsUserEntityResponseCollection>;
   achievement?: Maybe<AchievementEntityResponse>;
   achievements?: Maybe<AchievementEntityResponseCollection>;
+  achievemtChatter?: Maybe<AchievemtChatterEntityResponse>;
+  achievemtChatters?: Maybe<AchievemtChatterEntityResponseCollection>;
+  birthday?: Maybe<BirthdayEntityResponse>;
+  birthdays?: Maybe<BirthdayEntityResponseCollection>;
   chatter?: Maybe<ChatterEntityResponse>;
   chatters?: Maybe<ChatterEntityResponseCollection>;
   guild?: Maybe<GuildEntityResponse>;
   guilds?: Maybe<GuildEntityResponseCollection>;
+  quote?: Maybe<QuoteEntityResponse>;
+  quotes?: Maybe<QuoteEntityResponseCollection>;
   test?: Maybe<TestEntityResponse>;
   tests?: Maybe<TestEntityResponseCollection>;
   text?: Maybe<TextEntityResponse>;
@@ -1018,6 +1215,32 @@ export type QueryAchievementsArgs = {
 };
 
 
+export type QueryAchievemtChatterArgs = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type QueryAchievemtChattersArgs = {
+  filters?: InputMaybe<AchievemtChatterFiltersInput>;
+  pagination?: InputMaybe<PaginationArg>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  publicationState?: InputMaybe<PublicationState>;
+};
+
+
+export type QueryBirthdayArgs = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type QueryBirthdaysArgs = {
+  filters?: InputMaybe<BirthdayFiltersInput>;
+  pagination?: InputMaybe<PaginationArg>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  publicationState?: InputMaybe<PublicationState>;
+};
+
+
 export type QueryChatterArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
@@ -1042,6 +1265,19 @@ export type QueryGuildsArgs = {
 };
 
 
+export type QueryQuoteArgs = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type QueryQuotesArgs = {
+  filters?: InputMaybe<QuoteFiltersInput>;
+  pagination?: InputMaybe<PaginationArg>;
+  sort?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  publicationState?: InputMaybe<PublicationState>;
+};
+
+
 export type QueryTestArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
@@ -1051,7 +1287,6 @@ export type QueryTestsArgs = {
   filters?: InputMaybe<TestFiltersInput>;
   pagination?: InputMaybe<PaginationArg>;
   sort?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  publicationState?: InputMaybe<PublicationState>;
 };
 
 
@@ -1077,12 +1312,21 @@ export type Mutation = {
   createAchievement?: Maybe<AchievementEntityResponse>;
   updateAchievement?: Maybe<AchievementEntityResponse>;
   deleteAchievement?: Maybe<AchievementEntityResponse>;
+  createAchievemtChatter?: Maybe<AchievemtChatterEntityResponse>;
+  updateAchievemtChatter?: Maybe<AchievemtChatterEntityResponse>;
+  deleteAchievemtChatter?: Maybe<AchievemtChatterEntityResponse>;
+  createBirthday?: Maybe<BirthdayEntityResponse>;
+  updateBirthday?: Maybe<BirthdayEntityResponse>;
+  deleteBirthday?: Maybe<BirthdayEntityResponse>;
   createChatter?: Maybe<ChatterEntityResponse>;
   updateChatter?: Maybe<ChatterEntityResponse>;
   deleteChatter?: Maybe<ChatterEntityResponse>;
   createGuild?: Maybe<GuildEntityResponse>;
   updateGuild?: Maybe<GuildEntityResponse>;
   deleteGuild?: Maybe<GuildEntityResponse>;
+  createQuote?: Maybe<QuoteEntityResponse>;
+  updateQuote?: Maybe<QuoteEntityResponse>;
+  deleteQuote?: Maybe<QuoteEntityResponse>;
   createTest?: Maybe<TestEntityResponse>;
   updateTest?: Maybe<TestEntityResponse>;
   deleteTest?: Maybe<TestEntityResponse>;
@@ -1167,6 +1411,38 @@ export type MutationDeleteAchievementArgs = {
 };
 
 
+export type MutationCreateAchievemtChatterArgs = {
+  data: AchievemtChatterInput;
+};
+
+
+export type MutationUpdateAchievemtChatterArgs = {
+  id: Scalars['ID'];
+  data: AchievemtChatterInput;
+};
+
+
+export type MutationDeleteAchievemtChatterArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationCreateBirthdayArgs = {
+  data: BirthdayInput;
+};
+
+
+export type MutationUpdateBirthdayArgs = {
+  id: Scalars['ID'];
+  data: BirthdayInput;
+};
+
+
+export type MutationDeleteBirthdayArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationCreateChatterArgs = {
   data: ChatterInput;
 };
@@ -1195,6 +1471,22 @@ export type MutationUpdateGuildArgs = {
 
 
 export type MutationDeleteGuildArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationCreateQuoteArgs = {
+  data: QuoteInput;
+};
+
+
+export type MutationUpdateQuoteArgs = {
+  id: Scalars['ID'];
+  data: QuoteInput;
+};
+
+
+export type MutationDeleteQuoteArgs = {
   id: Scalars['ID'];
 };
 

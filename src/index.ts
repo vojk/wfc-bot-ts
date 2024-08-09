@@ -4,6 +4,7 @@ import { commands } from "./commands";
 import { deployCommands, deployGlobalCommands } from "./deploy-commands";
 import { getDataFromStrapi } from "./strapi/strapi";
 import { countMessages } from "./countMessages";
+import {birthdayReminder} from "./commands/birthdayReminder/birthdayReminder";
 
 async function main() {
     try {
@@ -27,6 +28,7 @@ client.once("ready", async () => {
 
     // Deploy global commands (optional)
     await deployGlobalCommands();
+    await birthdayReminder(client);
 });
 
 client.on("guildCreate", async (guild) => {
