@@ -33,11 +33,9 @@ async function birthdayReminder_() {
 async function checkBirthday() {
     const birthdays = await birthdayReminder_()
     const today = new Date();
-    const todayString = today.toISOString().split('T')[0];
     const todayMonth = today.getMonth();
     const todayDay = today.getDate();
-    const todayYear = today.getFullYear();
-    const todayDate = new Date(todayYear, todayMonth, todayDay);
+    const todayDate = new Date(new Date().getFullYear(), todayMonth, todayDay);
     for (const birthday of birthdays) {
         const birthdayDate = new Date(birthday.attributes.dateOfBirth);
         if (birthdayDate.getDate() === todayDate.getDate() && birthdayDate.getMonth() === todayDate.getMonth()) {
