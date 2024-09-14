@@ -4,6 +4,7 @@ import * as embed from "./embed";
 import * as achievement from "./achievement";
 import * as ping from "./ping";
 import * as quote from "./quotes";
+import * as character from "./dnd/character";
 
 // Collect all command data
 export const commandData = [
@@ -13,6 +14,7 @@ export const commandData = [
     achievement.data,
     ping.data,
     quote.data,
+    character.data,
 ].filter(command => command !== undefined);  // Ensure no undefined commands
 
 // Export commands for handling
@@ -23,4 +25,5 @@ export const commands = {
     achievement,
     ping,
     quote,
+    character,
 };

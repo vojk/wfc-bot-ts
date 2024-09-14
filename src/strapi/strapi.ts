@@ -90,3 +90,5 @@ export async function getTextFromStrapi(type: typeOfText): Promise<string> {
     const random = Math.floor(Math.random() * response['texts']['data'].length);
     return await response['texts']['data'][random]['attributes']['text'];
 }
+
+//TODO rewrite to better variant, more in the Fisher or XO-MAP
