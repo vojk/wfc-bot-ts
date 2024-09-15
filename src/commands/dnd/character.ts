@@ -98,6 +98,9 @@ function createCharacterEmbed(data: any) {
                         **Věk:** ${data.attributes.age ? data.attributes.age : '*neznámé*'} \n
                         ${formatDiscordEmbed(data.attributes.description)} \n`,
                 inline: false,
+                image: {
+                    url: 'https://i.sstatic.net/Fzh0w.png',
+                }
             }
         ]);
 
