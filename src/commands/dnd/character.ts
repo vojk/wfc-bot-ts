@@ -1,17 +1,13 @@
-import {CommandInteraction, EmbedBuilder, SlashCommandBuilder} from "discord.js";
+import {CommandInteraction, EmbedBuilder, SlashCommandBuilder} from 'discord.js';
 import {getDataFromStrapi} from "../../strapi/strapi";
 
-async function buildCommand() {
-    return new SlashCommandBuilder()
-        .setName("character")
-        .setDescription("Select a D&D character")
-        .addStringOption(option =>
-            option.setName('name')
-                .setDescription('The name of the character')
-                .setRequired(true));
-}
-
-export const data = await buildCommand();
+export const data = new SlashCommandBuilder()
+    .setName("character")
+    .setDescription("Select a D&D character")
+    .addStringOption((option: any) =>
+        option.setName('name')
+            .setDescription('The name of the character')
+            .setRequired(true));
 
 export async function execute(interaction: CommandInteraction) {
     const characterName = interaction.options.getString('name');
@@ -35,7 +31,7 @@ export async function execute(interaction: CommandInteraction) {
         data = data.filter((character: any) => character.attributes.name.toLowerCase().includes(characterName.toLowerCase()));
 
         if (data.length === 0) {
-            await interaction.reply({content: `Postava s jménem ${characterName} nenalezena.`, ephemeral: true});
+            await interaction.reply({content: `Postava s jménem \`${characterName}\` nenalezena.`, ephemeral: true});
             return;
         }
 
@@ -82,7 +78,7 @@ function formatDiscordEmbed(data: any[]): string {
 function createSelectionEmbed(data: any) {
     const characterEmbed = new EmbedBuilder()
         .setTitle(`Dostupné postavy`)
-        .setColor('#0099ff')
+        .setColor('#b3ff00')
         .addFields(data.map(
             (character: any) => {
                 return {
@@ -97,7 +93,7 @@ function createSelectionEmbed(data: any) {
 function createCharacterEmbed(data: any) {
     const achievementsEmbed = new EmbedBuilder()
         .setTitle(`${data.attributes.name}`)
-        .setColor('#0099ff')
+        .setColor('#b3ff00')
         .addFields([
             {
                 name: `**Popis**`,
