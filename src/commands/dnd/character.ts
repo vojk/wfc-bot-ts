@@ -1,31 +1,14 @@
 import {CommandInteraction, EmbedBuilder, SlashCommandBuilder} from "discord.js";
 import {getDataFromStrapi} from "../../strapi/strapi";
 
-
-async function getAllCharacters() {
-    const response = await getDataFromStrapi('api/dnd-characters');
-    const data = await response.json();
-
-    return data['data'].map((character: any) => {
-        return {
-            name: character.attributes.name,
-            value: character.attributes.name,
-        };
-    });
-}
-
 async function buildCommand() {
-    const characters = await getAllCharacters();
-
     return new SlashCommandBuilder()
         .setName("character")
         .setDescription("Select a D&D character")
         .addStringOption(option =>
             option.setName('name')
                 .setDescription('The name of the character')
-                .setRequired(true)
-                .addChoices(...characters) // Spread the array of choices
-        );
+                .setRequired(true));
 }
 
 export const data = await buildCommand();
@@ -36,17 +19,27 @@ export async function execute(interaction: CommandInteraction) {
     let data;
 
     try {
-        const response = await getDataFromStrapi(`api/dnd-characters?filters[name][$eq]=${characterName}`)
+        const response = await getDataFromStrapi(`api/dnd-characters?filters[name][$eqi]=${characterName}`)
         data = await response.json();
         data = data['data'][0];
     } catch (error) {
         console.error(error);
     }
 
-    console.log(JSON.stringify(data.attributes.description));
-
     if (!data) {
-        return await interaction.reply('Character not found');
+        const response = await getDataFromStrapi(`api/dnd-characters`)
+        data = await response.json();
+        data = data['data'];
+
+        //Write me a code, where you show all characters, which has the name in the their name
+        data = data.filter((character: any) => character.attributes.name.toLowerCase().includes(characterName.toLowerCase()));
+
+        if (data.length === 0) {
+            await interaction.reply({content: `Postava s jménem ${characterName} nenalezena.`, ephemeral: true});
+            return;
+        }
+
+        return await interaction.reply({embeds: [createSelectionEmbed(data)], ephemeral: true});
     }
 
     const characterEmbed = createCharacterEmbed(data);
@@ -84,6 +77,21 @@ function formatDiscordEmbed(data: any[]): string {
                 return '';
         }
     }).join('\n');
+}
+
+function createSelectionEmbed(data: any) {
+    const characterEmbed = new EmbedBuilder()
+        .setTitle(`Dostupné postavy`)
+        .setColor('#0099ff')
+        .addFields(data.map(
+            (character: any) => {
+                return {
+                    name: `**${character.attributes.name}**`,
+                    value: `${character.attributes.race ? character.attributes.race : '*neznámá rasa*'}`
+                }
+            }
+        ));
+    return characterEmbed;
 }
 
 function createCharacterEmbed(data: any) {
