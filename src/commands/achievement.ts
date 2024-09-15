@@ -40,7 +40,7 @@ const getAchievementsOfUser = gql`
 export const data = new SlashCommandBuilder()
     .setName("achievement")
     .setDescription("Get your achievements!")
-    .addUserOption(option =>
+    .addUserOption((option: any) =>
         option.setName('user')
             .setDescription('The user to get the achievements from')
             .setRequired(false));
