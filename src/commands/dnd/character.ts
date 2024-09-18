@@ -7,7 +7,7 @@ export const data = new SlashCommandBuilder()
     .addStringOption((option: any) =>
         option.setName('name')
             .setDescription('The name of the character')
-            .setRequired(true));
+            .setRequired(false));
 
 export async function execute(interaction: CommandInteraction) {
     const characterName = interaction.options.getString('name');
@@ -26,6 +26,10 @@ export async function execute(interaction: CommandInteraction) {
         const response = await getDataFromStrapi(`api/dnd-characters`)
         data = await response.json();
         data = data['data'];
+
+        if (!characterName) {
+            return await interaction.reply({embeds: [createSelectionEmbed(data)], ephemeral: true});
+        }
 
         //Write me a code, where you show all characters, which has the name in the their name
         data = data.filter((character: any) => character.attributes.name.toLowerCase().includes(characterName.toLowerCase()));
