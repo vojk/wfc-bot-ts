@@ -1,6 +1,5 @@
-version: "3.3"
 services:
-  app:
+  wfc-bot:
     container_name: wfc-bot-cont
     image: wfc-bot:latest
     restart: always
